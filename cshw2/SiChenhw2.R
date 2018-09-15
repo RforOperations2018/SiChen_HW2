@@ -82,15 +82,16 @@ server <- function(input, output, session = session) {
       filter(Tripduration >= input$TripdurationSelect[1] & Tripduration <= input$TripdurationSelect[2])
     #selectinput speedlevel filter
     if (length(input$SpeedSelect) > 0 ) {
-      ride.filter <- subset(ride.filter, speedlevel%in% input$SpeedSelect)
+      # In general spacing here makes sense between the %in% and . 
+      ride.filter <- subset(ride.filter, speedlevel %in% input$SpeedSelect)
     }
     # check box usertype Filter
-      ride.filter <- subset(ride.filter, Usertype%in%input$UserSelect)
+    # I would have a similar if() statement as you have for SpeedSelect, as all the plots/tables break when I unselect both boxes.
+    ride.filter <- subset(ride.filter, Usertype %in% input$UserSelect)
 
-    
     return(ride.filter)
   })
-
+  # Description comment missing
   mwInput <- reactive({
     swInput() %>%
       melt(id = "Usertype")
@@ -101,11 +102,13 @@ server <- function(input, output, session = session) {
     ggplotly(
       ggplot(data = dat, aes(x = Speed, y = Tripduration, color = Usertype))+geom_point())})
   #point plot showing different usertype speed distribution
+  # This one is a box plot! Be careful
   output$plot2 <- renderPlotly({
     dat <- swInput()
     ggplotly(
       ggplot(data = dat, aes(x = Usertype, y = Speed))+geom_boxplot())})
   #point plot showing the amount of each usertype in various sppedlevel
+  # This is a bar chart
   output$plot3 <- renderPlotly({
     dat <- swInput()
     ggplotly(
